@@ -56,9 +56,7 @@ int main(){
         i++;
     }
     string2[i] = '\0';
-
-    printf("%s", string1);
-    printf("%s", string2);
+    
     printf("%d %d %d", contaCaractere(string1), contaCaractere(string2), verificarIgualdade(string1, string2));  //Chamada das funções e print apropriado
     return 0;
 }
