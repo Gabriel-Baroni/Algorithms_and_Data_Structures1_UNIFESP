@@ -13,7 +13,7 @@ No *cabeca; // ponteiro para a cabeca da sequencia de simbolos
 
 typedef struct Maquina{
 int n_tambores; // numero de tambores na maquina
-Tambor *tambores; // ponteiro para VETOR de Tambor e NAO vetor de PONTEIROS de Tambor
+Tambor* tambores; // ponteiro para VETOR de Tambor e NAO vetor de PONTEIROS de Tambor
 }Maquina;
 
 // cria_maquina: recebe um número de tambores, aloca uma máquina e inicializa o campo “cabeca”;
