@@ -16,7 +16,9 @@ typedef struct pilha{
 
 //Cria uma pilha vazia
 Pilha* criar(){
-    return NULL; 
+    Pilha* p = malloc(sizeof(Pilha));
+    p->prim = NULL;
+    return p; 
 }
 
 //Insere um elemento no  topo da pilha

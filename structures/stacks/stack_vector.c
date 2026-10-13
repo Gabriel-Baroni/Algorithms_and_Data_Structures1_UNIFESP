@@ -15,6 +15,7 @@ Pilha* criar(){
     Pilha* p = malloc(sizeof(Pilha));
     p->qtd = 0;
     p->dados = malloc(MAX*sizeof(int)); 
+    return p; 
 }
 
 //Insere um elemento no topo da pilha (final do vetor); 

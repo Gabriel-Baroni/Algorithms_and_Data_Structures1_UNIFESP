@@ -4,9 +4,6 @@
 
 typedef struct pilha Pilha;
 
-//Tipo estruturado de Lista linear simplesmente encadeada
-typedef struct lista Lista; 
-
 //Funções exportadas
 
 //Inicializa uma pilha vazia
