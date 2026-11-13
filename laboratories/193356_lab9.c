@@ -6,10 +6,10 @@
 typedef struct no{
     int info;
     struct no* prox;
-}No;
+}NoPilha;
 
 typedef struct pilha{
-    No* prim;
+    NoPilha* prim;
 }Pilha;
 
 Pilha* criar_pilha(){
@@ -19,7 +19,7 @@ Pilha* criar_pilha(){
 } 
 
 void push(Pilha* p, int v){
-    No* novo = malloc(sizeof(No));
+    NoPilha* novo = malloc(sizeof(NoPilha));
     novo->info = v;
     novo->prox = p->prim;
     p->prim = novo;  
@@ -29,7 +29,7 @@ int pop(Pilha* p){
     if(p->prim == NULL){
         return 0;
     }
-    No* removido = p->prim;
+    NoPilha* removido = p->prim;
     int v = removido->info; 
     p->prim = removido->prox;
     free(removido); 
@@ -37,14 +37,51 @@ int pop(Pilha* p){
 }
 
 void liberar_pilha(Pilha* p){
-    No* no = p->prim;
+    NoPilha* no = p->prim;
     while(no!=NULL){
-        No* aux = no->prox;
+        NoPilha* aux = no->prox;
         free(no);
         no = aux; 
     }
     free(p);
 } 
+
+//-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A FILA-=-=--=-=--=-=--=-=-
+typedef struct no{
+    int info;
+    struct no* prox;
+}NoFila;
+
+typedef struct fila{
+    NoFila* inicio;
+    NoFila* fim;
+}Fila; 
+
+Fila* criar_fila(){
+    Fila* f = malloc(sizeof(Fila));
+    f->inicio == NULL;
+    f->fim == NULL;
+    return f;
+}
+
+void insere_fila(Fila* f, int v){
+    NoFila* novo = malloc(sizeof(NoFila));
+    novo->info = v;
+    novo->prox = NULL;
+    if(f->inicio == NULL){
+        f->inicio = novo;
+    }else{
+        f->fim->prox = novo;
+    }
+    f->fim = novo; 
+}
+
+int retirar_fila(Fila* f){
+    if(f->inicio == NULL){
+        return 0;
+    }
+}
+
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A ABB-=-=--=-=--=-=--=-=-
 
