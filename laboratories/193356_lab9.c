@@ -3,8 +3,14 @@
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A PILHA-=-=--=-=--=-=--=-=-
 
-typedef struct no{
+typedef struct arv{
     int info;
+    struct arv* esq;
+    struct arv* dir;
+}Arv;
+
+typedef struct no{
+    Arv* info;
     struct no* prox;
 }NoPilha;
 
@@ -18,22 +24,31 @@ Pilha* criar_pilha(){
     return p; 
 } 
 
-void push(Pilha* p, int v){
+void push(Pilha* p, Arv* v){
     NoPilha* novo = malloc(sizeof(NoPilha));
     novo->info = v;
     novo->prox = p->prim;
     p->prim = novo;  
 }
 
-int pop(Pilha* p){
+Arv* pop(Pilha* p){
     if(p->prim == NULL){
         return 0;
     }
     NoPilha* removido = p->prim;
-    int v = removido->info; 
+    Arv* v = removido->info; 
     p->prim = removido->prox;
     free(removido); 
     return v;
+}
+
+Arv* verTopo(Pilha* p){
+    if(p->prim == NULL){
+        return 0;
+    }
+    Arv* v = p->prim->info; 
+    return v;
+
 }
 
 void liberar_pilha(Pilha* p){
@@ -47,9 +62,9 @@ void liberar_pilha(Pilha* p){
 } 
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A FILA-=-=--=-=--=-=--=-=-
-typedef struct no{
+typedef struct nofila{
     int info;
-    struct no* prox;
+    struct nofila* prox;
 }NoFila;
 
 typedef struct fila{
@@ -80,6 +95,27 @@ int retirar_fila(Fila* f){
     if(f->inicio == NULL){
         return 0;
     }
+    int valor = f->inicio->info;
+    NoFila* noExcluido = f->inicio;
+    f->inicio = f->inicio->prox;
+    if(f->inicio ==NULL){
+        f->fim = NULL;
+    }
+    free(noExcluido); 
+    return valor;
+}
+
+void liberarFila(Fila* f){
+    if(f==NULL){
+        return;
+    }
+    NoFila* no = f->inicio;
+    while(no != NULL){
+        NoFila* aux = no;
+        free(no);
+        no = aux;  
+    }
+    free(f); 
 }
 
 
@@ -137,10 +173,35 @@ void emOrdem(Arv* raiz){
     emOrdem(raiz->dir); 
 }
 
-//Percorre a árvore em pós-ordem de froma iterativa
+//Percorre a árvore em pós-ordem de forma iterativa
 void posOrdem(Arv* raiz){
+    //Verifica se a árvore esta vazia
     if(vazia(raiz)){
         return;
+    }
+    //Captura a raiz
+    Arv* atual = raiz;
+    //Variável auxiliar para guardar elementos já visitados
+    Arv* anterior = NULL;
+    //Pilha criada para simular o funcionamento da recursividade na stack da memória RAM
+    Pilha* pilha = criar_pilha();
+    //Repete o loop enquanto a pilha estiver com algum elemento OU o nó atual for diferente de NULL
+    while(pilha->prim != NULL|| atual!=NULL){ //Precisa desse atual!= NULL pois se não eu irira adicionar dois nós raiz na pilha
+        //Percorre todos os nós da SAE e vai adicionando eles na pilha
+        while(atual!=NULL){
+            push(pilha, atual);
+            atual=atual->esq;
+        }
+        //Se saiu do laço, quer dizer que chegou em um nó que não tem mais filhos a esquerda
+        Arv* topo = verTopo(pilha); //Essa função serve para capturar o topo da pilha (ultimo push), sem dar pop nele
+        //Se esse elemento tiver filho a direita e ainda não foi visitado
+        if(topo->dir !=NULL && topo->dir != anterior){
+            atual = topo->dir;
+        }else{
+            //Se ele não tem filho na direita (folha) ou já foi visitado
+            printf("%d", topo->info);
+            anterior = pop(pilha);
+        }
     }
 }
 
@@ -188,7 +249,7 @@ int main(){
     emOrdem(arvore); 
     printf("\n");
     //Imprime em pós-ordem
-
+    posOrdem(arvore);
     printf("\n");
     //Imprime em nível
 
