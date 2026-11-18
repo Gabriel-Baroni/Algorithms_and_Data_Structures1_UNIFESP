@@ -3,6 +3,7 @@
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A PILHA-=-=--=-=--=-=--=-=-
 
+//Declaração do nó da arvore para ser usado na pilha e fila
 typedef struct arv{
     int info;
     struct arv* esq;
@@ -33,7 +34,7 @@ void push(Pilha* p, Arv* v){
 
 Arv* pop(Pilha* p){
     if(p->prim == NULL){
-        return 0;
+        return NULL;
     }
     NoPilha* removido = p->prim;
     Arv* v = removido->info; 
@@ -44,7 +45,7 @@ Arv* pop(Pilha* p){
 
 Arv* verTopo(Pilha* p){
     if(p->prim == NULL){
-        return 0;
+        return NULL;
     }
     Arv* v = p->prim->info; 
     return v;
@@ -63,7 +64,7 @@ void liberar_pilha(Pilha* p){
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A FILA-=-=--=-=--=-=--=-=-
 typedef struct nofila{
-    int info;
+    Arv* info;
     struct nofila* prox;
 }NoFila;
 
@@ -74,12 +75,12 @@ typedef struct fila{
 
 Fila* criar_fila(){
     Fila* f = malloc(sizeof(Fila));
-    f->inicio == NULL;
-    f->fim == NULL;
+    f->inicio = NULL;
+    f->fim = NULL;
     return f;
 }
 
-void insere_fila(Fila* f, int v){
+void insere_fila(Fila* f, Arv* v){
     NoFila* novo = malloc(sizeof(NoFila));
     novo->info = v;
     novo->prox = NULL;
@@ -91,11 +92,11 @@ void insere_fila(Fila* f, int v){
     f->fim = novo; 
 }
 
-int retirar_fila(Fila* f){
+Arv* retirar_fila(Fila* f){
     if(f->inicio == NULL){
-        return 0;
+        return NULL;
     }
-    int valor = f->inicio->info;
+    Arv* valor = f->inicio->info;
     NoFila* noExcluido = f->inicio;
     f->inicio = f->inicio->prox;
     if(f->inicio ==NULL){
@@ -111,7 +112,7 @@ void liberarFila(Fila* f){
     }
     NoFila* no = f->inicio;
     while(no != NULL){
-        NoFila* aux = no;
+        NoFila* aux = no->prox;
         free(no);
         no = aux;  
     }
@@ -121,12 +122,6 @@ void liberarFila(Fila* f){
 
 //-=-=--=-=--=-=--=-=-ESTRUTURAS E FUNÇÕES PARA A ABB-=-=--=-=--=-=--=-=-
 
-//Estrutura de uma árvore
-typedef struct arv{
-    int info;
-    struct arv* esq;
-    struct arv* dir;
-}Arv;
 
 //Cria uma árvore vazia 
 Arv* criar_vazia(){
@@ -147,7 +142,7 @@ Arv* insere(Arv* raiz, int v){
         raiz->dir = NULL; 
     }else if(raiz->info > v){
         raiz->esq = insere(raiz->esq, v); 
-    }else{
+    }else if(raiz->info < v){
         raiz->dir = insere(raiz->dir, v);
     }
     return raiz; 
@@ -203,6 +198,34 @@ void posOrdem(Arv* raiz){
             anterior = pop(pilha);
         }
     }
+    liberar_pilha(pilha); 
+}
+
+void porNivel (Arv* raiz){
+    //Verifica se a árvore está vazia
+    if(raiz==NULL){
+        return;
+    }
+    //Cria uma fila 
+    Fila* fila = criar_fila();
+    //Insere a raiz da árvore na fila 
+    insere_fila(fila, raiz);
+    //Enquanto a fila estiver vazia 
+    while(fila->inicio!= NULL){
+        //Pega o primeiro da fila
+        Arv* atual = retirar_fila(fila);
+        //Coloca o filho da esquerda, se tiver
+        if(atual->esq !=NULL){
+            insere_fila(fila, atual->esq);
+        }
+        //Coloca o filho da direita, se tiver
+        if(atual->dir !=  NULL){
+            insere_fila(fila, atual->dir);
+        }
+        //Imprime o nó em questão
+        printf("%d", atual->info);
+    }
+    liberarFila(fila); 
 }
 
 //Realiza busca binária na árvore
@@ -217,6 +240,14 @@ int buscar(Arv* raiz, int v){
     } else{
         return buscar(raiz->dir, v); 
     }
+}
+
+//Função para liberar todos os nós da árvore (precisa ser em pós-ordem)
+void liberar_arv(Arv* raiz){
+    if(raiz == NULL) return;
+    liberar_arv(raiz->esq);
+    liberar_arv(raiz->dir);
+    free(raiz); 
 }
 
 int main(){
@@ -252,9 +283,14 @@ int main(){
     posOrdem(arvore);
     printf("\n");
     //Imprime em nível
-
+    porNivel(arvore); 
     printf("\n");
     //Imprime em se existe ou não o elemento buscado
-    printf("%d", buscar(arvore, v)); 
+    printf("%d", buscar(arvore, v));
+    printf("\n");
+
+    //Liberar estruturas 
+    liberar_arv(arvore); 
+    free(lista); 
     return 0; 
 }
